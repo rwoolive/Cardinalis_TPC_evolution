@@ -1,21 +1,12 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Create TPCs for each of the 12 M. cardinalis groups
-#### and each of the 216 M. cardinalis families
-#### using code from Silas Tittes et al. 2019
-
-#### This is the main code we are working with for tpc evolution paper 
-#### as of 14 February, 2010 In this code, we model a tpc for each group,
-#### using data that are averaged for each family at each temperature
-#### total number of groups: 12
-#### total number of families: 216 (18 per group)
-#### total number of temperatures: 8
-
-
-# performr vignette by Silas Tittes: https://silastittes.github.io/performr/
-# performr implements a probabilistic Bayesian hierarchical model (using Stan) 
-# to predict tolerance/performance curves for a set of input taxa. The manuscript 
-# that describes the method is Tittes et al. 2019 Am Nat (doi: 10.1086/701827)
+#### PURPOSE: Create TPCs across 8 temperature regimes for each  
+####          of the 12 M. cardinalis groups (18 families/group) 
+####          using the heirarchical bayesian performance curve  
+####          model of Tittes et al. 2019 (doi: 10.1086/701827). 
+####          This code is based on the performr vignette: 
+####          https://silastittes.github.io/performr/
+#### DATE LAST MODIFIED: 2020-02-15 by rcw
 
 
 
@@ -23,7 +14,7 @@
 #load performr
 devtools::install_github("silastittes/performr", local = FALSE) 
 
-#load other libraries 
+#load other packages 
 library(dplyr)
 library(devtools)
 library(performr)
@@ -201,11 +192,14 @@ model_fits_groups_av <- rstan::read_stan_csv(c("Analysis output/model/stan_examp
                                                "Analysis output/model/stan_example_groups_av.samples_2.csv",
                                                "Analysis output/model/stan_example_groups_av.samples_3.csv", 
                                                "Analysis output/model/stan_example_groups_av.samples_4.csv"))
+############ 
+
 
 
 
 ############ 
-# The output is the same as any Stan model. n_eff is very large and Rhat is close to 1
+# The output is the same as any Stan model. 
+# n_eff should be very large and Rhat should be close to 1
 knitr::kable(rstan::summary(model_fits_groups_av)$summary, digits = 3)
 
 sumtab <- round(rstan::summary(model_fits_groups_av)$summary, digits=2)
@@ -225,9 +219,8 @@ ndraws_groups_av <- length(draws_groups_av$lp__)
 
 
 ############ 
-# Visualize uncertainty in curves predictions
-# First, let’s generate a tidy data frame with all the parameters, plus some 
-# valuable derived parameters, like the optimum, area, and breadth for each species. 
+# Generate a tidy data frame with all the parameters, plus some 
+# valuable derived parameters, like the optimum, area, and breadth for each group 
 # We will use this data frame for other tasks below as well.
 
 head(
@@ -238,11 +231,25 @@ head(
     ) 
 )
 
+# tidy_perf_groups_av is the dataframe that we can use for pairwise 
+# comparisons and plotting.
+# shape1: First of the two parameters that modifies curve asymmetry; when shape1
+# is larger than shape2 , the curve will skew right
+# shape2: Second parameter that modifies curve asymmetry; when shape2
+# is larger than shape1 , the curve will skew left
+# stretch: Dictates the maximum expected value of the response trait (maximum RGR)
+# min_max: Performance breadth
+# nu: Variance?
+# x_min: Location along the environmental axis left of the optimum where the 
+# response trait falls to 0 (low temperature threshold)
+# x_max: Location along the environmental axis right of the optimum where the 
+# response trait falls to 0 (high temperature threshold)
+
 
 
 
 ############ 
-# Calculate performance maximum for each iteration of the model
+# Calculate performance maximum for each iteration of the model.
 # To get the actual RGR max value, it should just be the value of the Kumaraswamy-ish 
 # function at the optimum.  The values and scale will differ, but it should be very 
 # correlated with the value of stretch. If you want to calculate it, the easiest 
@@ -257,21 +264,6 @@ tidy_perf_groups_av %<>%
   do({
     mutate(.data = ., max_RGR = performance_mu(xs = .$maxima, .$shape1, .$shape2, .$stretch, .$x_min, .$x_max))
   })
-
-
-###### tidy_perf_groups_av is the dataframe that we can use for pairwise 
-# comparisons and plotting
-# shape1: First of the two parameters that modifies curve asymmetry; when shape1
-# is larger than shape2 , the curve will skew right
-# shape2: Second parameter that modifies curve asymmetry; when shape2
-# is larger than shape1 , the curve will skew left
-# stretch: Dictates the maximum expected value of the response trait (maximum RGR)
-# min_max: Performance breadth
-# nu: Variance?
-# x_min: Location along the environmental axis left of the optimum where the 
-# response trait falls to 0 (low temperature threshold)
-# x_max: Location along the environmental axis right of the optimum where the 
-# response trait falls to 0 (high temperature threshold)
 
 
 
@@ -334,7 +326,7 @@ View(ssq_df)
 #compute bayesian p value
 ssq_df %>% 
   summarise(b_pval=mean(ssq_obs > ssq_pseudo))
-# overall bayesian p value = 0.1862667
+# overall bayesian p value = 0.1862667. that's good!
 
 #compute bayesian p value for each group
 ssq_group <- ssq_df %>% 
@@ -416,6 +408,7 @@ ssq_plot
 pdf("Figures/Figure S2.pdf", height=5, width=6.5)
 ssq_plot
 dev.off()
+############ 
 
 
 
@@ -435,13 +428,12 @@ tidy_perf_groups_av$max_RGR <- tidy_perf_groups_av$max_RGR * meansTot_avDat$RGR
 
 ############ 
 # CALCULATE B50, LOWER LIMITS, UPPER LIMITS
-################
+############ 
 # THE FUNCTION #
 # The higher prop_max, the narrower the output breadth will be as the interval is 
 # moving nearer to the optimum. The function reports the x axis values the breadth 
 # is calculated from: 'opt_breadth_low' & 'opt_breadth_high'. 'opt_breadth' is the 
 # difference between low and high, i.e., the breadth. 
-################
 
 optimum_breadth <- 
   function(par_df, prop_max = 0.5, n_grid = 100){
@@ -509,6 +501,7 @@ tidy_perf_groups_av %<>%
 tidy_perf_groups_av$B80_low <- tidy_perf_groups_av$opt_breadth_low1 + meansTot_avDat$Temp
 tidy_perf_groups_av$B80_high <- tidy_perf_groups_av$opt_breadth_high1 + meansTot_avDat$Temp
 tidy_perf_groups_av$B80 <- tidy_perf_groups_av$B80_high - tidy_perf_groups_av$B80_low
+############ 
 
 
 
@@ -622,7 +615,7 @@ head(
 
 
 ############ 
-# Write the model output/data to csv. 
+# Write the model output/data to csv files
 ############ 
 
 write.csv(creds_groups_av, "Analysis output/creds_groups_av.csv")
@@ -639,26 +632,31 @@ write.csv(tidy_perf_groups_av, "Analysis output/tidy_perf_groups_av.csv")
 
 ############ 
 # Read the model output/data back in. 
-# Start from here if amending plots, but be sure to load in packages at the top of this R script
+# Start from here if amending plots, but be sure to 
+# load in packages at the top of this R script.
+# For some of the columns, we need to make sure they 
+# are characters, factors, or continuous numbers. We 
+# also need to add Population and Year columns into 
+# avDat.
 ############ 
 
-creds_groups_av <- read.csv("Analysis output/creds_groups_av.csv")
-creds_groups_av <- creds_groups_av[,-1]
+# TPC prediction intervals
+creds_groups_av <- read.csv("Analysis output/creds_groups_av.csv")[,-1]
 creds_groups_av$species <- as.character(creds_groups_av$species)
 
-tidy_perf_groups_av <- read.csv("Analysis output/tidy_perf_groups_av.csv")
-tidy_perf_groups_av <- tidy_perf_groups_av[,-1]
+# posterior draws
+tidy_perf_groups_av <- read.csv("Analysis output/tidy_perf_groups_av.csv")[,-1]
 
-mean_df <- read.csv("Analysis output/mean_df_groups_av.csv")
-mean_df <- mean_df[,-1]
+# group means for each tpc parameter
+mean_df <- read.csv("Analysis output/mean_df_groups_av.csv")[,-1]
 mean_df$species <- as.factor(mean_df$species)
 
-mean_df_ci <- read.csv("Analysis output/mean_df_ci_groups_av.csv")
-mean_df_ci <- mean_df_ci[,-1]
+# group credible intervals for each tpc parameter
+mean_df_ci <- read.csv("Analysis output/mean_df_ci_groups_av.csv")[,-1]
 mean_df_ci$species <- as.factor(mean_df_ci$species)
 
-avDat <- read.csv("Analysis output/avDat.csv")
-avDat <- avDat[,-1]
+# family-averaged data used in the model
+avDat <- read.csv("Analysis output/avDat.csv")[,-1]
 avDat$daytimeTemp <- as.numeric(avDat$daytimeTemp)
 avDat$Pop <- rep("N1", dim(avDat)[1])
 avDat$Pop[which(avDat$Group.ord %in% c(2,8))] <- "N2"
@@ -672,6 +670,7 @@ avDat$Year <- rep(2010, dim(avDat)[1])
 avDat$Year[which(avDat$Group.ord %in% c(7:12))] <- 2017
 avDat$Year <- as.factor(avDat$Year)
 
+# mean RGR and temperature from the family-averaged dataset
 meansTot_avDat <- read.csv("Processed data/TPC data_cleaned_av.csv") %>% 
   dplyr::select(daytimeTemp, FamID, Group.ord, RGR) %>% 
   drop_na() %>% 
@@ -702,7 +701,7 @@ creds_groups_av$lower <- creds_groups_av$lower * meansTot_avDat$RGR
 
 
 ############ 
-# In creds, assign population and year to "species" for plotting, then order "species"
+# In creds, assign population and year to "species" (groups) for plotting, then order "species"
 creds_groups_av$Pop <- rep("N1",dim(creds_groups_av)[1])
 creds_groups_av$Pop[which(creds_groups_av$species %in% c("2", "8"))] <- "N2"
 creds_groups_av$Pop[which(creds_groups_av$species %in% c("3", "9"))] <- "C1"
@@ -812,7 +811,7 @@ tidy_perf_groups_av$group <- paste(tidy_perf_groups_av$Pop, tidy_perf_groups_av$
 tidy_perf_groups_av$group <- as.factor(tidy_perf_groups_av$group)
 tidy_perf_groups_av$group <- factor(tidy_perf_groups_av$group, levels(tidy_perf_groups_av$group)[c(5:8,1:4,9:12)])
 
-# create new columns for labelling facets in the plot
+# create new column for labelling facets in the plot
 tidy_perf_groups_av$optimum <- tidy_perf_groups_av$maxima
 
 # now plot
@@ -836,12 +835,11 @@ dev.off()
 
 
 
-# Let's make a plot shows the tpc's for 2010 (blue) and 2017 (red) cohorts, 
-# with 95% confidence intervals, for each population, including  
+# Let's make a plot of tpc's for 2010 (blue) and 2017 (red) cohorts, 
+# with 95% credible intervals, for each population, including  
 # thermal optima (dotted vertical lines), 
-# upper and lower thermal limits (notches on x axis),
+# upper and lower thermal limits (notches on x axis), and
 # breadth (dashed horizontal lines),
-# performance maxima (dotted horizontal lines)
 
 plwd <- 1.25 # parameter lwd
 pla <- 1 # parameter line alpha
@@ -868,15 +866,13 @@ bayesFit_groups_av <- ggplot(data = filter(creds_groups_av, level == 95)) +
                alpha=pla, lwd=plwd, inherit.aes=FALSE, lty=2,  arrow=arrow(length = unit(0.1, "cm")), lineend="round", linejoin="mitre") + # horizontal arrows for B50 (middle to right end)
   geom_segment(data=mean_df, aes(x=maximaBT, y=max_RGR*0.5, xend=B50_low+0.5, yend=max_RGR*0.5,  group=Pop, color=year), 
                alpha=pla, lwd=plwd, inherit.aes=FALSE, lty=2, arrow=arrow(length = unit(0.1, "cm")), lineend="round", linejoin="mitre") + # horizontal arrows for B50 (middle to left end)
-  # geom_segment(data=mean_df, aes(x=maximaBT, y=max_RGR, xend=6, yend=max_RGR, group=Pop, color=year), 
-  #              alpha=1, lwd=0.75, inherit.aes=FALSE, lty=3) +
   geom_segment(data=mean_df, aes(x=x_minBT, y=0.075, xend=x_minBT, yend=0, group=Pop, color=year), 
                alpha=pla, lwd=plwd, inherit.aes=FALSE, lty=1) + # lower thermal limit
   geom_segment(data=mean_df, aes(x=x_maxBT, y=0.075, xend=x_maxBT, yend=0, group=Pop, color=year), 
                alpha=pla, lwd=plwd, inherit.aes=FALSE, lty=1) + # upper thermal limit
   scale_x_continuous(limits=c(6,49), expand = c(0, 0)) +
   scale_y_continuous(limits=c(-0.01,1), expand = c(0, 0), breaks = seq(0,1,by=0.2), minor_breaks = waiver()) 
-bayesFit_groups_av <- lemon::reposition_legend(bayesFit_groups_av, 'top left', panel = 'panel-1-1') # allows me to put the legend in the first panel
+bayesFit_groups_av <- lemon::reposition_legend(bayesFit_groups_av, 'top left', panel = 'panel-1-1') # put the legend in the first panel
 
 
 
@@ -884,7 +880,7 @@ bayesFit_groups_av <- lemon::reposition_legend(bayesFit_groups_av, 'top left', p
 
 
 
-# export plots
+# export tpc plot
 pdf("Figures/Figure 3.pdf", height=8, width=5)
 figure <- ggarrange(bayesFit_groups_av, ncol = 1, nrow = 1)
 figure
@@ -906,7 +902,7 @@ params <- c("stretch", "maxima", "maximaBT", "breadth", "breadthBT",
             "max_RGR")
 ###### level (the probability of difference threshold. the table will print 
 ###### a "*" if the probability of one group having a smaller parameter value 
-###### than another is less than 0.05 or greater than 0.95, and two "**" if it 
+###### than another is less than 0.025 or greater than 0.975, and two "**" if it 
 ###### above the level value specified  -- default is 0.99. The values in the 
 ###### table are the posterior average of the column group minus the row group.)
 hi <- 0.99

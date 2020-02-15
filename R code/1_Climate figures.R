@@ -1,9 +1,11 @@
 
-#### PROJECT: Mimulus cardinalis NSF proposal
-#### PURPOSE: Plot climate data for M. cardinalis study populations
-#### Climate data were derived from Climate WNA v. 5.51
+#### PROJECT: Mimulus cardinalis TPC project
+#### PURPOSE: Plot climate data for M. cardinalis study populations   
+####          Climate data were derived from Climate WNA v. 5.51 
 #### AUTHOR: Seema Sheth
-#### DATE LAST MODIFIED: 2020-02-14 by rcw
+#### DATE LAST MODIFIED: 2020-02-15 by rcw
+
+
 
 ###########################
 # load packages
@@ -89,11 +91,13 @@ clim_study=dat %>%
   filter(Year>2009) %>% 
   arrange(-Latitude)
 
+
 ###########################
 # make file of lat/lon only
 ###########################
 study_pops=clim_study %>%
   filter(Year==2010)
+
 
 ###########################
 # order populations by latitude from north to south
@@ -108,8 +112,8 @@ study_pops$ID1= factor(study_pops$ID1,levels = c("S2","S1","C2","C1","N2","N1"))
 
 
 ###########################
-# seasonality for each population and recent anomalies
-# seasonality is greatest in Central pops, lowest in Northern pops
+# Calculate historical seasonality for each population and recent anomalies.
+# Historical seasonality is greatest in Central pops, lowest in Northern pops
 # average anomaly is negative in Central/Southern pops, positive in Northern pops
 ###########################
 avS <- clim_hist %>%

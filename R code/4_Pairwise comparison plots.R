@@ -1,20 +1,29 @@
+
 #### PROJECT: Mimulus cardinalis TPC project
 #### PURPOSE: Plot pairwise comparisons of TPC parameters 
-#### between 12 M. cardinalis groups.
+####          between 12 M. cardinalis groups.
 #### AUTHOR: Rachel Wooliver
+#### DATE LAST MODIFIED: 2020-02-15 by rcw
 
 
+# The pairwise comparison datasets that we will read in have values representing posterior  
+# averages of the column group minus the row group. * denotes probability of one group 
+# having a smaller parameter value than another is less than 0.025 or greater than 0.975, 
+# and ** denotes probability of one group having a smaller parameter value than anoter is 
+# less than 0.01 or greater than 0.99  
+
+
+
+###########################
+# load packages
+###########################
 library(reshape2)
 library(ggplot2)
 
 
-# read in data, where values represent posterior averages of the column group minus 
-# the row group, * denotes probability of one group having a smaller parameter
-# value than another is less than 0.05 or greater than 0.95, and ** denotes
-# probability of one group having a smaller parameter value than anoter is less
-# than 0.01 or greater than 0.99  
 
-# create a matrix the same size as the pairwise comparison table, but containing 
+
+# create a matrix the same size as each pairwise comparison table, but containing 
 # 0's for comparisons nonessential for hypothesis testing and 1's for comparisons 
 # essential for hypothesis testing
 boxes <- matrix(0, nrow=12, ncol=12)
@@ -40,6 +49,7 @@ melted_cormat_boxes$value[which(melted_cormat_boxes$value==1)] <- "[  ]"
 ##### thermal optima (same results with raw and back-transformed values):
 ##### 
 
+# read in data and order N1 2010, N1 2017, N2 2010, N2 2017, C1 2010... S2 2010, S2 2017
 dat <- read.csv("Analysis output/pairwise_tables_groups_av/maximaBT_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
@@ -49,6 +59,8 @@ rownames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
                    "S1 2010", "S1 2017", "S2 2010", "S2 2017")
 dat <- dat[12:1,12:1]
+
+
 
 # create a matrix the same size as the pairwise comparison table, but containing 
 # 0's for non-significant comparisons and 1's for significant comparisons

@@ -1,11 +1,15 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Clean up TPC data for M. cardinalis study populations
-#### & make preliminary figures showing RGR & survival across temperature
+#### PURPOSE: Clean up TPC data for M. cardinalis study   
+####          populations 
 #### AUTHOR: Rachel Wooliver
+#### DATE LAST MODIFIED: 2020-02-15 by rcw
 
 
 
+###########################
+# load packages
+###########################
 library(ggplot2)
 library(dplyr)
 library(tidyverse)

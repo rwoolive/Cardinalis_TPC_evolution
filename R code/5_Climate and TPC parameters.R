@@ -1,8 +1,14 @@
-#### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Determine if TPC parameters have evolved, and whether they are 
-#### correlated with climatic data 
-#### AUTHOR: Rachel Wooliver 
 
+#### PROJECT: Mimulus cardinalis TPC project
+#### PURPOSE: Determine if TPC parameters are 
+####          correlated with climatic data 
+#### AUTHOR: Rachel Wooliver
+#### DATE LAST MODIFIED: 2020-02-15 by rcw
+
+
+###########################
+# load packages and specify settings
+###########################
 library(ggplot2)
 library(tidyverse)
 theme_set(theme_bw())
@@ -11,14 +17,14 @@ theme_set(theme_bw())
 ###########################
 # read in the data
 ###########################
-popBayes_params <- read.csv("Analysis output/group_mean_params_av.csv") # these are the parameters for the Bayes model including family-averaged data
-avJMT <- read.csv("Processed data/average JMT by pop.csv") # population-averaged july max temp
-avS <- read.csv("Processed data/average seasonality by pop.csv") # population-averaged seasonality
+popBayes_params <- read.csv("Analysis output/group_mean_params_av.csv") # these are the parameters for the group-level Bayes model of family-averaged data
+avJMT <- read.csv("Processed data/average JMT by pop.csv") # population-averaged july max temp with recent anomalies
+avS <- read.csv("Processed data/average seasonality by pop.csv") # population-averaged seasonality with recent anomalies
 
 
 
 ###########################
-# add JMT and seasonality means and anomalies to tpc parameter dataset
+# add JMT and seasonality means and mean anomalies to tpc parameter dataset
 ###########################
 pop_params <- popBayes_params
 pop_params$meanJMT <- rep(avJMT$meanJMT, 2)
@@ -28,7 +34,7 @@ pop_params$devS <- rep(avS$avDevS, 2)
 
 
 ###########################
-# add region and make factors
+# add region and redo region, year, and population columns as factors
 ###########################
 pop_params$reg <- rep(rep(c("N", "C", "S"), each=2),2)
 pop_params$reg <- as.factor(pop_params$reg)
@@ -60,20 +66,18 @@ dat2017 <- pop_params[which(pop_params$year==2017),]
 ##################################################################
 ##### Fig 3 of TPC manuscript
 ##################################################################
-palpha <- 0.65
-psize <- 8
-tsize <- 4
+palpha <- 0.65 # alpha of points
+psize <- 8 # size of points
+tsize <- 4 # size of population text
 ############################
 # is topt related to historical July max temps? 
 # test of divergence across space
 ############################
 
 # model of topt across historical July max temps
-# no effects
+# no effects of JMT, year, or their interaction
 mod <- lm(maximaBT~meanJMT*year, data=pop_params)
 anova(mod)
-round(summary(mod)$adj.r.squared,digits=3)
-round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3)
 shapiro.test(residuals(mod)) # normally distributed residuals
 
 # remove year from model
@@ -131,15 +135,18 @@ plot1Bayes <- ggplot(dat2010, aes(x=meanJMT, y=maximaBT)) +
 ############################
 
 # model of B50 across seasonality
-# B50 tends to increase with seasonality
+# B50 increases with seasonality
+# no effect of year or interaction between seasonality and year
 mod <- lm(B50~meanS*year, data=pop_params)
 anova(mod) 
+
 # remove cohort
 mod <- lm(B50~meanS, data=pop_params)
 anova(mod) # df=1,10; ss=2.7252 ; msq=2.72523  ;  f=7.9093  ; p=0.0184
 round(summary(mod)$adj.r.squared,digits=3) # rsqadj=0.386
 round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b=0.253
 shapiro.test(residuals(mod)) # normally distributed residuals
+
 # remove seasonality
 mod <- lm(B50~year, data=pop_params)
 anova(mod) # df=1,10; ss=0.1564  ; msq=0.15643    ;  f=0.2601   ; p=0.6211
