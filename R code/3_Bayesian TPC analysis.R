@@ -182,7 +182,7 @@ perf_out <-
     treatment = daytimeTemp,
     group_ids = Group.ord,
     seed = 1234, max_treedepth = 12,
-    file_id =  "Analysis output/stan_example_groups_av", 
+    file_id =  "Analysis output/model/stan_example_groups_av", 
     iter = 10000
   )
 
@@ -197,10 +197,10 @@ perf_out <-
 
 ############ 
 # load model fits 
-model_fits_groups_av <- rstan::read_stan_csv(c("Analysis output/stan_example_groups_av.samples_1.csv", 
-                                               "Analysis output/stan_example_groups_av.samples_2.csv",
-                                               "Analysis output/stan_example_groups_av.samples_3.csv", 
-                                               "Analysis output/stan_example_groups_av.samples_4.csv"))
+model_fits_groups_av <- rstan::read_stan_csv(c("Analysis output/model/stan_example_groups_av.samples_1.csv", 
+                                               "Analysis output/model/stan_example_groups_av.samples_2.csv",
+                                               "Analysis output/model/stan_example_groups_av.samples_3.csv", 
+                                               "Analysis output/model/stan_example_groups_av.samples_4.csv"))
 
 
 
@@ -326,8 +326,8 @@ ssq_df <- bayes_p(
   raw_treatment = "daytimeTemp", 
   raw_response = "RGR", 
   raw_group = "Group.ord")
-write.csv(ssq_df, "Analysis output/ssq_df_av.csv") 
-ssq_df <- read.csv("Analysis output/ssq_df_av.csv") 
+write.csv(ssq_df, "Analysis output/model/ssq_df_av.csv") 
+ssq_df <- read.csv("Analysis output/model/ssq_df_av.csv") 
 
 View(ssq_df)
 
