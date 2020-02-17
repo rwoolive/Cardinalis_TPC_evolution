@@ -194,8 +194,11 @@ plot2bBayes
 
 
 # plot climate vs. tpc parameter regressions 
-library(ggpubr)
-theme_set(theme_pubr())
+# export tpc plot
+ggsave("Figures/Figure 4.png", 
+       ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18)), 
+       height=4.5, width=10, dpi=600)
+
 figure <- ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18))
 pdf("Figures/Figure 4.pdf", height=4.5, width=10)
 figure

@@ -881,10 +881,12 @@ bayesFit_groups_av <- lemon::reposition_legend(bayesFit_groups_av, 'top left', p
 
 
 # export tpc plot
-pdf("Figures/Figure 3.pdf", height=8, width=5)
-figure <- ggarrange(bayesFit_groups_av, ncol = 1, nrow = 1)
-figure
-dev.off()
+ggsave("Figures/Figure 3.png", 
+       ggarrange(bayesFit_groups_av, ncol = 1, nrow = 1), 
+       height=8, width=5, dpi=600)
+
+
+
 
 
 

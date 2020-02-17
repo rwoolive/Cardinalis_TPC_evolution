@@ -262,7 +262,7 @@ card_map=ggplot(data=world,fill="lightgrey",col="black",size=0.3) +
   geom_text(data=study_pops, aes(x=Longitude,y=Latitude,label=ID1),hjust=-0.5, vjust=c(0.5,0.5,-0.75,1,-0.5,1),size=8,fontface="bold") +
   scale_fill_manual(values=c("#9E0142","#9E0142","#FEF0A5","#FEF0A5","#5E4FA2","#5E4FA2")) + # use this for colored lines
   labs(x="Longitude",y="Latitude",fill="ID1",data=study_pops) +
-  theme(axis.text=element_text(size=16),axis.title=element_text(size=20),
+  theme(axis.text=element_text(size=14),axis.title=element_text(size=20),
         legend.position = "none",panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   ggtitle('A') + theme(plot.title=element_text(hjust=0,size=24)) 
   
@@ -313,9 +313,10 @@ seasonality_plot=ggplot(clim_hist, aes(group=ID1,x=ID1, y=seasonality, fill=ID1,
 
 # print to pdf: ALT FIGURE 2 FOR TPC MANUSCRIPT 27 January 2020
 # shows map, historical Jul Tmax with anomalies, historical seasonality with anomalies
-png("Figures/Figure 2.png", width=1200, height=600)    
-grid.arrange(card_map,jmt_plot2,seasonality_plot,ncol=3, nrow=1, widths=c(1,1,1),heights=1)
-dev.off()
+ggsave("Figures/Figure 2.png", 
+       grid.arrange(card_map,jmt_plot2,seasonality_plot,ncol=3, nrow=1, widths=c(1,1,1),heights=1), 
+       width=15, height=7.5, dpi=600)
+
 
 
 
@@ -484,7 +485,7 @@ SlmSE
 
 # print to pdf: Figure S5
 # shows recent trends in july max temp and intra-annual temp var
-png("Figures/Figure S5.png",width=700,height=350)    
+png("Figures/Figure S5.png", width=700,height=350)    
 grid.arrange(JMTlmSE,SlmSE, ncol=2, nrow=1)
 dev.off()
 
