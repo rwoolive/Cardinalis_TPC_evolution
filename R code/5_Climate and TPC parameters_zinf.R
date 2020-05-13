@@ -3,7 +3,7 @@
 #### PURPOSE: Determine if TPC parameters are 
 ####          correlated with climatic data 
 #### AUTHOR: Rachel Wooliver
-#### DATE LAST MODIFIED: 2020-02-15 by rcw
+#### DATE LAST MODIFIED: 2020-05-12 by rcw
 
 
 ###########################
@@ -106,14 +106,14 @@ plot1Bayes <- ggplot(dat2010, aes(x=meanJMT, y=maximaBT)) +
   scale_shape_manual(values=c(shapes)[1]) +
   labs(y=expression(paste("Thermal optimum (°C)")),
        x=expression(paste("Maximum July temperature (°C)"))) +
-  annotate("text", label = c("North", "Central", "South"), y = 34.15, x = c(28.1,30.1,32.1), size = 5, colour = "black", hjust = 0) +
-  geom_point(aes(y=34.15, x=27.75), shape=22, size=8, fill="#5E4FA2") +
-  geom_point(aes(y=34.15, x=29.75), shape=22, size=8, fill="#FEF0A5") +
-  geom_point(aes(y=34.15, x=31.75), shape=22, size=8, fill="#9E0142") +
-  annotate("text", label = c("Ancestors", "Descendants"), y = 33.85, x = c(28.1,30.6), size = 5, colour = "black", hjust = 0) +
-  geom_point(aes(y=33.85, x=27.75), shape=shapes[1], size=8) +
-  geom_point(aes(y=33.85, x=30.25), shape=shapes[2], size=8) +
-  xlim(c(26.75,34.05)) + ylim(c(31.67,34.2)) +
+  annotate("text", label = c("North", "Central", "South"), y = 34.25, x = c(28.1,30.1,32.1), size = 5, colour = "black", hjust = 0) +
+  geom_point(aes(y=34.25, x=27.75), shape=22, size=8, fill="#5E4FA2") +
+  geom_point(aes(y=34.25, x=29.75), shape=22, size=8, fill="#FEF0A5") +
+  geom_point(aes(y=34.25, x=31.75), shape=22, size=8, fill="#9E0142") +
+  annotate("text", label = c("Ancestors", "Descendants"), y = 34, x = c(28.1,30.6), size = 5, colour = "black", hjust = 0) +
+  geom_point(aes(y=34, x=27.75), shape=shapes[1], size=8) +
+  geom_point(aes(y=34, x=30.25), shape=shapes[2], size=8) +
+  xlim(c(26.75,34.05)) + ylim(c(32,34.3)) +
   theme_bw() +
   theme(axis.text=element_text(size=14), axis.title=element_text(size=16),
         legend.position = "none", panel.border = element_rect(colour = "black", fill=NA, size=1.5),
@@ -196,10 +196,10 @@ plot2bBayes
 # plot climate vs. tpc parameter regressions 
 # export tpc plot
 ggsave("Figures/Figure 4_zinf.png", 
-       ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18)), 
+       ggpubr::ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18)), 
        height=4.5, width=10, dpi=600)
 
-figure <- ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18))
+figure <- ggpubr::ggarrange(plot1Bayes, plot2bBayes, ncol=2, nrow=1, labels = c("A","B"), font.label = list(size=18))
 pdf("Figures/Figure 4_zinf.pdf", height=4.5, width=10)
 figure
 dev.off()

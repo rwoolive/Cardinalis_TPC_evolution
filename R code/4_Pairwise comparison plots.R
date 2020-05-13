@@ -3,7 +3,7 @@
 #### PURPOSE: Plot pairwise comparisons of TPC parameters 
 ####          between 12 M. cardinalis groups.
 #### AUTHOR: Rachel Wooliver
-#### DATE LAST MODIFIED: 2020-02-15 by rcw
+#### DATE LAST MODIFIED: 2020-05-12 by rcw
 
 
 # The pairwise comparison datasets that we will read in have values representing posterior  
@@ -50,7 +50,7 @@ melted_cormat_boxes$value[which(melted_cormat_boxes$value==1)] <- "[  ]"
 ##### 
 
 # read in data and order N1 2010, N1 2017, N2 2010, N2 2017, C1 2010... S2 2010, S2 2017
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/maximaBT_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/maximaBT_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -151,7 +151,7 @@ ggheatmapTopt <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### x_min:
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/x_minBT_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/x_minBT_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -247,7 +247,7 @@ ggheatmapXmin <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### x_max:
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/x_maxBT_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/x_maxBT_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -350,7 +350,7 @@ ggheatmapXmax <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### breadth (B50):
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/B50_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/B50_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -451,7 +451,7 @@ ggheatmapB50 <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### breadth (B80):
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/B80_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/B80_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -547,7 +547,7 @@ ggheatmapB80 <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### performance maximum:
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/max_RGR_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/max_RGR_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -643,7 +643,7 @@ ggheatmapmax_RGR <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### area:
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/area_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/area_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -738,7 +738,7 @@ ggheatmapArea <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 ##### critical breadth:
 ##### 
 
-dat <- read.csv("Analysis output/pairwise_tables_groups_av/breadthBT_pairwise_newthresh.csv", 
+dat <- read.csv("Analysis output/pairwise_tables_groups_av_zinf/breadthBT_pairwise_newthresh.csv", 
                 row.names=1)[c(1,7,2,8,3,9,4,10,5,11,6,12),c(1,7,2,8,3,9,4,10,5,11,6,12)] 
 colnames(dat) <- c("N1 2010", "N1 2017", "N2 2010", "N2 2017",
                    "C1 2010", "C1 2017", "C2 2010", "C2 2017",
@@ -846,7 +846,7 @@ ggheatmapBreadth <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
 
 library(ggpubr)
 theme_set(theme_minimal())
-pdf("Figures/Figure S4.pdf", height=15, width=15)
+pdf("Figures/Figure S4_zinf.pdf", height=15, width=15)
 figure <- ggarrange(ggheatmapTopt, ggheatmapB50, ggheatmapB80, 
                     ggheatmapBreadth, ggheatmapXmin, ggheatmapXmax,
                     ggheatmapmax_RGR, ggheatmapArea, 
