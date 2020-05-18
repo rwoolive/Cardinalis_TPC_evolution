@@ -3,9 +3,10 @@
 #### PURPOSE: Model TPCs across 8 temperature regimes for each  
 ####          of the 12 M. cardinalis groups (18 families/group) 
 ####          using the heirarchical bayesian performance curve  
-####          model of Tittes et al. 2019 (doi: 10.1086/701827). 
-#### DATE LAST MODIFIED: 2020-18-11 by rcw
-#### THIS CODE USES A MODEL THAT ACCOUNTS FOR ZERO-INFLATION
+####          model of Tittes et al. 2019 (doi: 10.1086/701827)
+####          that accounts for zero-inflation
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
+
 #### WARNING: THE MODEL (LINE 189) IS COMPUTATIONALLY INTENSIVE AND WILL TAKE TIME TO RUN
 # Stan Development Team (2018). RStan: the R interface to Stan. R package version 2.17.3. http://mc-stan.org
 # Package performr version 0.2
@@ -21,10 +22,8 @@ library(devtools)
 library(performr)
 library(tidyverse)
 library(ggridges)
-library(cowplot)
 library(ggpubr)
-library(agricolae)
-library(GGally)
+
 
 # Other settings
 theme_set(theme_cowplot())
@@ -43,15 +42,15 @@ extract <- rstan::extract
 # Summary data
 dat <- read.csv("Processed data/TPC data_cleaned.csv") 
 # how many plants do we have an RGR value for?
-dat2 <- (dat[which(dat$outRGR==0),]) # 6033
+dat <- (dat[which(dat$outRGR==0),]) # 6033
 
 # look at proportion surviving chamber runs
-length(dat$RGR[which(dat$surv==0)])
+length(dat2$RGR[which(dat$surv==0)]) # 699 died
 survproptemp <- dat %>%
   dplyr::group_by(daytimeTemp) %>%
   dplyr::summarize(mean = mean(surv, na.rm = TRUE)) 
-1-0.411 # proportion mortality at 10°C: 0.589
-1-0.747 # proportion mortality at 10°C: 0.253
+1-survproptemp$mean[which(survproptemp$daytimeTemp==10)] # proportion mortality at 10°C: 0.593
+1-survproptemp$mean[which(survproptemp$daytimeTemp==45)] # proportion mortality at 45°C: 0.257
 
 
 
@@ -113,6 +112,7 @@ dat <- filter(dat, !is.na(RGR))
 write.csv(dat, "Processed data/TPC data_cleaned_av.csv")
 hist(dat$RGR) # raw values range from 0 to 1 
 table(dat$daytimeTemp) # raw temp values range from 10 to 15, with up to 216 RGR values (families) per temp
+table(dat$Group) # raw temp values range from 10 to 15, with up to 216 RGR values (families) per temp
 
 # summary info for RGR
 range(na.omit(dat$RGR)) 
@@ -120,7 +120,7 @@ mean(na.omit(dat$RGR))
 sd(na.omit(dat$RGR))/sqrt(length(na.omit(dat$RGR)) )
 
 
-############ 
+############
 # Get raw overall mean of RGR and Temp from family-averaged dataset
 # We will use this to scale RGR and center Temp data for the bayesian model
 meansTot_avDat <- read.csv("Processed data/TPC data_cleaned_av.csv") %>% 
@@ -128,7 +128,7 @@ meansTot_avDat <- read.csv("Processed data/TPC data_cleaned_av.csv") %>%
   drop_na() %>% 
   summarize(RGR = mean(RGR, na.rm=TRUE),
             Temp = mean(daytimeTemp, na.rm=TRUE))
-write.csv(meansTot_avDat, "meansTot_avDat.csv")
+write.csv(meansTot_avDat, "Processed data/meansTot_avDat.csv")
 
 
 ############ 
@@ -138,7 +138,7 @@ avDat <- mutate(dat,
                 RGR = RGR / meansTot_avDat$RGR)
 hist(avDat$RGR) # scaled values range from 0 to 4 
 table(avDat$daytimeTemp) # centered temp values range from -17.52 to 17.49, with up to 216 RGR values (families) per temp
-
+write.csv(avDat, "Processed data/avDat.csv")
 
 
 ############ 
@@ -174,7 +174,7 @@ ggplot(avDat, aes(x = daytimeTemp, y = RGR, group = FamID)) +
   facet_wrap(~Group.ord, ncol=4) +
   theme(legend.position="none", panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  stat_summary(fun.y = mean, geom = "line", lwd=0.25, aes(color=FamID)) +
+  stat_summary(fun = mean, geom = "line", lwd=0.25, aes(color=FamID)) +
   scale_color_manual(values=rep(rainbow(18),12))
 
 

@@ -1,9 +1,12 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Process TPC model output 
-#### DATE LAST MODIFIED: 2020-18-11 by rcw
-#### WARNING: SOME CALCULATIONS (E.G. PERFORMANCE MAXIMUM, P-VALUES, AND B50) 
-#### ARE COMPUTATIONALLY INTENSIVE AND WILL TAKE TIME TO RUN
+#### PURPOSE: Process TPC model output,
+####          export model summary (Table S3) 
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
+#### WARNING: MODEL OUTPUT FILES ARE LARGE AND WILL TAKE TIME TO READ IN.
+#### SOME CALCULATIONS (E.G. PERFORMANCE MAXIMUM, P-VALUES, AND B50) 
+#### ARE COMPUTATIONALLY INTENSIVE AND WILL TAKE TIME TO RUN.
+
 
 
 #load performr
@@ -33,16 +36,22 @@ model_fits_groups_av <- rstan::read_stan_csv(c("Analysis output/model/stan_examp
                                                "Analysis output/model/stan_example_groups_av_zinf.samples_2.csv",
                                                "Analysis output/model/stan_example_groups_av_zinf.samples_3.csv", 
                                                "Analysis output/model/stan_example_groups_av_zinf.samples_4.csv"))
-############ 
 
+
+############ 
+# read in overall average rgr and temperature
+meansTot_avDat <- read.csv("Processed data/meansTot_avDat.csv")
+
+
+############ 
+# read in family-averaged data
+avDat <- read.csv("Processed data/avDat.csv")
 
 
 
 ############ 
 # The output is the same as any Stan model. 
 # n_eff should be very large and Rhat should be close to 1
-knitr::kable(rstan::summary(model_fits_groups_av)$summary, digits = 3)
-
 sumtab <- round(rstan::summary(model_fits_groups_av)$summary, digits=2)
 write.csv(sumtab, file="Analysis output/Table S3_zinf.csv")
 
@@ -167,7 +176,7 @@ View(ssq_df)
 #compute bayesian p value
 ssq_df %>% 
   summarise(b_pval=mean(ssq_obs > ssq_pseudo))
-# overall bayesian p value = 0.8012417. that's good!
+# overall bayesian p value = 0.8019292, that's good!
 
 #compute bayesian p value for each group
 ssq_group <- ssq_df %>% 
@@ -212,8 +221,8 @@ ssq_df <- ssq_df %>%
                             "N1 2010 (0.91)" = "1",
                             "N1 2017 (0.91)" = "2",
                             "N2 2010 (0.94)" = "3",
-                            "N2 2017 (0.84)" = "4",
-                            "C1 2010 (0.60)" = "5",
+                            "N2 2017 (0.85)" = "4",
+                            "C1 2010 (0.61)" = "5",
                             "C1 2017 (0.70)" = "6",
                             "C2 2010 (0.95)" = "7",
                             "C2 2017 (0.71)" = "8",
@@ -222,7 +231,7 @@ ssq_df <- ssq_df %>%
                             "S2 2010 (0.77)" = "11",
                             "S2 2017 (0.86)" = "12"))
 # then reorder to N1 2010, N1 2017, etc.
-ssq_df$group <- factor(ssq_df$group, levels(ssq_df$group)[c(1,5,6,7,8,9,10,11,12,2,3,4)])
+ssq_df$group <- factor(ssq_df$group, levels(ssq_df$group)[c(1,5:12,2:4)])
 
 # subsample to make a figure
 subsamp <-  ssq_df%>%

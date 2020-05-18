@@ -1,8 +1,9 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Calculate group mean parameters with credible 
-#### intervals and plot TPCs
-#### DATE LAST MODIFIED: 2020-18-11 by rcw
+#### PURPOSE: Calculate group mean parameters with credible intervals (Table S4)
+####          plot combinations of marginal posteriors (Fig. S3), 
+####          and plot TPCs (Fig. 3)
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
 
 
 #load performr
@@ -24,6 +25,9 @@ library(GGally)
 theme_set(theme_cowplot())
 options(mc.cores = parallel::detectCores())
 extract <- rstan::extract
+
+
+
 
 
 ############ 
@@ -66,11 +70,7 @@ avDat$Year[which(avDat$Group.ord %in% c(2,4,6,8,10,12))] <- 2017
 avDat$Year <- as.factor(avDat$Year)
 
 # mean RGR and temperature from the family-averaged dataset
-meansTot_avDat <- read.csv("Processed data/TPC data_cleaned_av.csv") %>% 
-  dplyr::select(daytimeTemp, FamID, Group.ord, RGR) %>% 
-  drop_na() %>% 
-  summarize(RGR = mean(RGR, na.rm=TRUE),
-            Temp = mean(daytimeTemp, na.rm=TRUE))
+meansTot_avDat <- read.csv("Processed data/meansTot_avDat.csv")
 
 
 
@@ -158,7 +158,6 @@ mean_ci_table <- mean_ci_table[,c("Pop.x", "year.x",
                                   "x_maxCI", 
                                   "max_RGRCI", 
                                   "areaCI")]
-mean_ci_table <- mean_ci_table[c(1,7,2,8,3,9,4,10,5,11,6,12),]
 write.csv(mean_ci_table, "Analysis output/Table S4_zinf.csv")
 
 
@@ -203,6 +202,14 @@ tidy_perf_groups_av$Year <- as.factor(tidy_perf_groups_av$Year)
 ############ 
 # Plot combinations of marginal posteriors for parameters using pairs plots: 
 
+
+# load model fits & determine ndraws
+model_fits_groups_av <- rstan::read_stan_csv(c("Analysis output/model/stan_example_groups_av_zinf.samples_1.csv", 
+                                               "Analysis output/model/stan_example_groups_av_zinf.samples_2.csv",
+                                               "Analysis output/model/stan_example_groups_av_zinf.samples_3.csv", 
+                                               "Analysis output/model/stan_example_groups_av_zinf.samples_4.csv"))
+draws_groups_av <- rstan::extract(model_fits_groups_av)
+ndraws_groups_av <- length(draws_groups_av$lp__)
 
 # add group as a column in tidy dataframe
 tidy_perf_groups_av$group <- paste(tidy_perf_groups_av$Pop, tidy_perf_groups_av$Year, sep=" ")
@@ -282,3 +289,4 @@ bayesFit_groups_av <- lemon::reposition_legend(bayesFit_groups_av, 'top left', p
 ggsave("Figures/Figure 3_zinf.png", 
        ggarrange(bayesFit_groups_av, ncol = 1, nrow = 1), 
        height=8, width=5, dpi=600)
+

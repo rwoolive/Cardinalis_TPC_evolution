@@ -1,7 +1,7 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Calculate pairwise comparisons between groups
-#### DATE LAST MODIFIED: 2020-18-11 by rcw
+#### PURPOSE: Calculate pairwise comparisons between groups (Table 1)
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
 
 
 #load performr
@@ -28,6 +28,11 @@ extract <- rstan::extract
 
 
 
+# posterior draws
+tidy_perf_groups_av <- read.csv("Analysis output/tidy_perf_groups_av_zinf.csv")[,-1]
+
+
+
 
 
 
@@ -50,7 +55,7 @@ lo <- 1 - hi
 
 ###### pairwise comparison function
 
-pairwise_probs_groups_av <- function(stan_df = stan_df, group, params, level = 0.99){
+pairwise_probs_groups_av <- function(stan_df, group, params, level = 0.99){
   group <- enquo(group)
   params %>% walk(function(param){
     
@@ -96,7 +101,6 @@ pairwise_probs_groups_av <- function(stan_df = stan_df, group, params, level = 0
 pairwise_probs_groups_av(stan_df = tidy_perf_groups_av, 
                          group = species, 
                          params = params)
-
 
 
 

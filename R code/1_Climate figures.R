@@ -1,9 +1,12 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
-#### PURPOSE: Plot climate data for M. cardinalis study populations   
+#### PURPOSE: Plot climate data for M. cardinalis study populations 
+####          Range map with anomalies in seasonality and max July temp (Fig. 2)  
+####          Variation in anomalies across study years (Fig. S5)
+####          Table showing coordinates & climate info by population (Table S1)
 ####          Climate data were derived from Climate WNA v. 5.51 
 #### AUTHOR: Seema Sheth
-#### DATE LAST MODIFIED: 2020-02-15 by rcw
+#### DATE LAST MODIFIED: 2020-02-18 by rcw
 
 
 
@@ -56,8 +59,6 @@ localities=read_csv("Raw data/all.records.aug.31.csv") %>%
   dplyr::filter(DATASET=="herb"&PRESABS==1) %>% # remove absence data
   dplyr::select(Latitude,Longitude) %>%
   dplyr::bind_rows(localities_Baja) # merge localities from US and Baja
-
-
 
 
 
@@ -213,11 +214,27 @@ write.csv(avPrecip, "Processed data/average MAP by pop and anom.csv")
 
 
 
+###########################
+# Table S1: Coordinates and climate data for each population
+###########################
+popdat <- data.frame(pop=localities$ID1,
+                     lat=localities$,
+                     long=localities$,
+                     elev=Localities$,
+                     mat.anom=avMAT$,
+                     jmt.anom=avJMT$,
+                     precip.anom=avPrecip$,
+                     seasonality.anom=avS$)
+write.csv(popdat, "Processed data/Table S1")
 
 
 
 
+
+
+###########################
 ### FIGURE 2 BY SNS ON 20190930: updated by RCW 20200127
+###########################
 clim_study$ID3 <- as.numeric(clim_study$ID2)
 clim_study$Year2 <- rep(0,dim(clim_study)[1])
 clim_study$Year2[which(clim_study$Year==2011)] <- 1
@@ -311,7 +328,7 @@ seasonality_plot=ggplot(clim_hist, aes(group=ID1,x=ID1, y=seasonality, fill=ID1,
 
 
 
-# print to pdf: ALT FIGURE 2 FOR TPC MANUSCRIPT 27 January 2020
+# print to pdf: ALT FIGURE 2 FOR TPC MANUSCRIPT 
 # shows map, historical Jul Tmax with anomalies, historical seasonality with anomalies
 ggsave("Figures/Figure 2.png", 
        grid.arrange(card_map,jmt_plot2,seasonality_plot,ncol=3, nrow=1, widths=c(1,1,1),heights=1), 

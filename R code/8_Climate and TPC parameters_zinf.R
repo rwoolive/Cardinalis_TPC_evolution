@@ -1,9 +1,9 @@
 
 #### PROJECT: Mimulus cardinalis TPC project
 #### PURPOSE: Determine if TPC parameters are 
-####          correlated with climatic data 
+####          correlated with climatic data (Fig. 4)
 #### AUTHOR: Rachel Wooliver
-#### DATE LAST MODIFIED: 2020-05-12 by rcw
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
 
 
 ###########################
@@ -17,7 +17,7 @@ theme_set(theme_bw())
 ###########################
 # read in the data
 ###########################
-popBayes_params <- read.csv("Analysis output/group_mean_params_av_zinf.csv") # these are the parameters for the group-level Bayes model of family-averaged data
+pop_params <- read.csv("Analysis output/group_mean_params_av_zinf.csv") # these are the parameters for the group-level Bayes model of family-averaged data
 avJMT <- read.csv("Processed data/average JMT by pop.csv") # population-averaged july max temp with recent anomalies
 avS <- read.csv("Processed data/average seasonality by pop.csv") # population-averaged seasonality with recent anomalies
 
@@ -26,18 +26,17 @@ avS <- read.csv("Processed data/average seasonality by pop.csv") # population-av
 ###########################
 # add JMT and seasonality means and mean anomalies to tpc parameter dataset
 ###########################
-pop_params <- popBayes_params
-pop_params$meanJMT <- rep(avJMT$meanJMT, 2)
-pop_params$devJMT <- rep(avJMT$avDevJMT, 2)
-pop_params$meanS <- rep(avS$meanS, 2)
-pop_params$devS <- rep(avS$avDevS, 2)
+pop_params$meanJMT <- rep(avJMT$meanJMT, each=2)
+pop_params$devJMT <- rep(avJMT$avDevJMT, each=2)
+pop_params$meanS <- rep(avS$meanS, each=2)
+pop_params$devS <- rep(avS$avDevS, each=2)
 
 
 ###########################
 # add region and redo region, year, and population columns as factors
 ###########################
-# REMEMBER that group 1 is N1 2010, group 2 is N2 2010, etc
-pop_params$reg <- rep(rep(c("N", "C", "S"), each=2),2)
+# REMEMBER that group 1 is N1 2010, group 2 is N1 2017, etc
+pop_params$reg <- rep(c("N", "C", "S"), each=4)
 pop_params$reg <- as.factor(pop_params$reg)
 pop_params$reg <- factor(pop_params$reg, levels(pop_params$reg)[c(2,1,3)])
 pop_params$year <- as.factor(pop_params$year)

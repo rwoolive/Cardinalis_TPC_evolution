@@ -3,7 +3,7 @@
 #### PURPOSE: Clean up TPC data for M. cardinalis study   
 ####          populations 
 #### AUTHOR: Rachel Wooliver
-#### DATE LAST MODIFIED: 2020-02-15 by rcw
+#### DATE LAST MODIFIED: 2020-05-18 by rcw
 
 
 
@@ -121,14 +121,13 @@ hist(data$RGR); range(na.omit(data$RGR))
 ###
 
 ## 1. Survival
-# survival = 0 if the plant died
-# and survival = NA if Leaf.number.going.in, Leaf.number.coming.out..green., & Leaf.number.coming.out..brown. are all NA
+# survival = 0 if the plant was alive going into the chamber then died
+# survival = 1 if there was were any green leaves coming out of the chamber
+# and survival = NA if the plant didn't germinate prior to chamber runs
 data$surv <- rep(1,dim(data)[1])
-died <- rep(0,dim(data)[1])
-died[which(naGoingIn==0 & data$Leaf.number.going.in==data$Leaf.number.coming.out..brown.)] <- 1
-died[which(data$Leaf.number.coming.out..green.>0)] <- 0
-data$surv[which(died==1)] <- 0
-data$surv[which(naGoingIn==1 & data$newGerm==0)]  <- NA
+data$surv[which(data$NAleafIn==0 & data$Leaf.number.going.in==data$Leaf.number.coming.out..brown.)] <- 0
+data$surv[which(data$Leaf.number.coming.out..green.>0)] <- 1
+data$surv[which(is.na(data$Leaf.number.going.in))]  <- NA
 
 
 
@@ -184,7 +183,7 @@ ggplot(data, aes(x = daytimeTemp, y = RGR, group=Group)) +
   facet_wrap(~Group, ncol=4) +
   theme(legend.position="none", panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  stat_summary(fun.y = mean, colour = "black", geom = "line", lwd=1.5)
+  stat_summary(fun = mean, colour = "black", geom = "line", lwd=1.5)
 
 
 
@@ -200,7 +199,7 @@ ggplot(data, aes(x = daytimeTemp, y = RGR, group = FamID)) +
   facet_wrap(~Group, ncol=4) +
   theme(legend.position="none", panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  stat_summary(fun.y = mean, geom = "line", lwd=0.25, aes(color=FamID)) +
+  stat_summary(fun = mean, geom = "line", lwd=0.25, aes(color=FamID)) +
   scale_color_manual(values=rep(rainbow(18),12))
 
 
@@ -216,7 +215,7 @@ ggplot(data, aes(x = daytimeTemp, y = surv, group = Group)) +
   theme(legend.position="none", panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   geom_hline(yintercept=c(0,1), linetype="dashed", color = "black") +
   geom_hline(yintercept=seq(.25,0.75,by=0.25), color = "gray", size=0.15) +
-  stat_summary(fun.y = mean, colour = "black", geom = "line", lwd=1.5)
+  stat_summary(fun = mean, colour = "black", geom = "line", lwd=1.5)
 
 
 
@@ -233,7 +232,7 @@ ggplot(data, aes(x = daytimeTemp, y = surv, colour = FamID)) +
   theme(legend.position="none", panel.border = element_rect(colour = "black", fill=NA, size=2)) +
   geom_hline(yintercept=c(0,1), linetype="dashed", color = "black") +
   geom_hline(yintercept=seq(.25,0.75,by=0.25), color = "gray", size=0.15) +
-  stat_summary(fun.y = mean, geom = "line", lwd=0.25)
+  stat_summary(fun = mean, geom = "line", lwd=0.25)
 
 
 
