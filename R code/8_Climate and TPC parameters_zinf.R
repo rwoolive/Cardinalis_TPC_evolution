@@ -36,6 +36,7 @@ pop_params$devS <- rep(avS$avDevS, 2)
 ###########################
 # add region and redo region, year, and population columns as factors
 ###########################
+# REMEMBER that group 1 is N1 2010, group 2 is N2 2010, etc
 pop_params$reg <- rep(rep(c("N", "C", "S"), each=2),2)
 pop_params$reg <- as.factor(pop_params$reg)
 pop_params$reg <- factor(pop_params$reg, levels(pop_params$reg)[c(2,1,3)])
