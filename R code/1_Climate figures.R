@@ -45,7 +45,7 @@ dat=read_csv("Raw data/Population_localities_1901-2017MSYT.csv") %>%
 ###########################
 localities_Baja=read_csv("Raw data/baja.csv") %>%
   filter(grepl(pattern="Baj", Point)) %>% # remove AZ and Cedros Island localities
-  dplyr::select(Lat,Lon) %>%
+  dplyr::select(Lat,Lon,) %>%
   dplyr::rename(Latitude=Lat,Longitude=Lon)
 
 
@@ -217,14 +217,14 @@ write.csv(avPrecip, "Processed data/average MAP by pop and anom.csv")
 ###########################
 # Table S1: Coordinates and climate data for each population
 ###########################
-popdat <- data.frame(pop=localities$ID1,
-                     lat=localities$,
-                     long=localities$,
-                     elev=Localities$,
-                     mat.anom=avMAT$,
-                     jmt.anom=avJMT$,
-                     precip.anom=avPrecip$,
-                     seasonality.anom=avS$)
+popdat <- data.frame(pop=dat$ID1[c(1:6)],
+                     lat=dat$Latitude[c(1:6)],
+                     long=dat$Longitude[c(1:6)],
+                     elev=dat$Elevation[c(1:6)],
+                     mat.anom=paste(round(avMAT$meanMAT,2), "/", round(avMAT$avDevMAT,2), sep=" "),
+                     jmt.anom=paste(round(avJMT$meanJMT,2), "/", round(avJMT$avDevJMT,2), sep=" "),
+                     precip.anom=paste(round(avPrecip$hist,2), "/", round(avPrecip$anom,2), sep=" "),
+                     seasonality.anom=paste(round(avS$meanS,2), "/", round(avS$avDevS,2), sep=" "))
 write.csv(popdat, "Processed data/Table S1")
 
 

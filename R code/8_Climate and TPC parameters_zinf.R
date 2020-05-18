@@ -82,15 +82,15 @@ shapiro.test(residuals(mod)) # normally distributed residuals
 
 # remove year from model
 mod <- lm(maximaBT~meanJMT, data=pop_params)
-anova(mod) # df=1,10; ss=0.47142 ; msq=0.47142  ;  f=1.9989 ; p=0.1878
-round(summary(mod)$adj.r.squared,digits=3) # rsqadj=0.083
+anova(mod) # df=1,10; ss=0.46672; f=1.9889; p=0.1888
+round(summary(mod)$adj.r.squared,digits=3) # rsqadj=0.082
 round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b=0.095
 shapiro.test(residuals(mod)) # normally distributed residuals
 
 # remove temp from model
 mod <- lm(maximaBT~year, data=pop_params)
-anova(mod) # df=1,10; ss=0.10335; msq=0.10335;  f=0.379; p=0.5519
-round(summary(mod)$adj.r.squared,digits=3) # rsqadj=-0.06
+anova(mod) # df=1,10; ss=0.10380  f 0.3831 p 0.5498
+round(summary(mod)$adj.r.squared,digits=3) # rsqadj=-0.059
 round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b=0.186
 shapiro.test(residuals(mod)) # normally distributed residuals
 
@@ -142,16 +142,16 @@ anova(mod)
 
 # remove cohort
 mod <- lm(B50~meanS, data=pop_params)
-anova(mod) # df=1,10; ss=1.6625 ; msq=1.6625  ;  f=5.1997  ; p=0.04576
-round(summary(mod)$adj.r.squared,digits=3) # rsqadj=0.276
-round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b=0.198
+anova(mod) # df=1,10; ss=1.6908  f 5.3423 p 0.04341 *
+round(summary(mod)$adj.r.squared,digits=3) # rsqadj=0.283
+round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b=0.2
 shapiro.test(residuals(mod)) # normally distributed residuals
 
 # remove seasonality
 mod <- lm(B50~year, data=pop_params)
-anova(mod) # df=1,10; ss=0.3851  ; msq=0.3851    ;  f=0.8607   ; p=0.3754
-round(summary(mod)$adj.r.squared,digits=3) # rsqadj= -0.013
-round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b= -0.358
+anova(mod) # df=1,10; ss=0.39231  f 0.8789 p 0.3706
+round(summary(mod)$adj.r.squared,digits=3) # rsqadj= -0.011
+round(as.data.frame(summary(mod)$coefficients)$Estimate[2],digits=3) # b= -0.362
 shapiro.test(residuals(mod)) # normally distributed residuals
 
 
