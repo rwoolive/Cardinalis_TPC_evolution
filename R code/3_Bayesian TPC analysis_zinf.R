@@ -112,7 +112,7 @@ dat <- filter(dat, !is.na(RGR))
 write.csv(dat, "Processed data/TPC data_cleaned_av.csv")
 hist(dat$RGR) # raw values range from 0 to 1 
 table(dat$daytimeTemp) # raw temp values range from 10 to 15, with up to 216 RGR values (families) per temp
-table(dat$Group) # raw temp values range from 10 to 15, with up to 216 RGR values (families) per temp
+table(dat$Group) # up to 144 RGR values (temp and family combinations) per group
 
 # summary info for RGR
 range(na.omit(dat$RGR)) 
