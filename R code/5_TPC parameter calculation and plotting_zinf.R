@@ -39,11 +39,11 @@ extract <- rstan::extract
 ############ 
 
 # TPC prediction intervals
-creds_groups_av <- read.csv("Analysis output/creds_groups_av_zinf.csv")[,-1]
+creds_groups_av <- read.csv("Analysis output/model/creds_groups_av_zinf.csv")[,-1]
 creds_groups_av$species <- as.character(creds_groups_av$species)
 
 # posterior draws
-tidy_perf_groups_av <- read.csv("Analysis output/tidy_perf_groups_av_zinf.csv")[,-1]
+tidy_perf_groups_av <- read.csv("Analysis output/model/tidy_perf_groups_av_zinf.csv")[,-1]
 
 # group means for each tpc parameter
 mean_df <- read.csv("Analysis output/mean_df_groups_av_zinf.csv")[,-1]
@@ -54,7 +54,7 @@ mean_df_ci <- read.csv("Analysis output/mean_df_ci_groups_av_zinf.csv")[,-1]
 mean_df_ci$species <- as.factor(mean_df_ci$species)
 
 # family-averaged data used in the model
-avDat <- read.csv("Analysis output/avDat_zinf.csv")[,-1]
+avDat <- read.csv("Analysis output/avDat.csv")[,-1]
 avDat$daytimeTemp <- as.numeric(avDat$daytimeTemp)
 # Group 1 is N1 2010, group 2 is N1 2017, etc.
 avDat$Pop <- rep("N1", dim(avDat)[1])

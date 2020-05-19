@@ -467,9 +467,9 @@ head(
 # Write the model output/data to csv files
 ############ 
 
-write.csv(creds_groups_av, "Analysis output/creds_groups_av_zinf.csv")
+write.csv(creds_groups_av, "Analysis output/model/creds_groups_av_zinf.csv")
 write.csv(mean_df, "Analysis output/mean_df_groups_av_zinf.csv")
 write.csv(mean_df_ci, "Analysis output/mean_df_ci_groups_av_zinf.csv")
 write.csv(avDat, "Analysis output/avDat_zinf.csv")
-write.csv(tidy_perf_groups_av, "Analysis output/tidy_perf_groups_av_zinf.csv")
+write.csv(tidy_perf_groups_av, "Analysis output/model/tidy_perf_groups_av_zinf.csv")
 

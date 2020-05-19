@@ -29,7 +29,7 @@ extract <- rstan::extract
 
 
 # posterior draws
-tidy_perf_groups_av <- read.csv("Analysis output/tidy_perf_groups_av_zinf.csv")[,-1]
+tidy_perf_groups_av <- read.csv("Analysis output/model/tidy_perf_groups_av_zinf.csv")[,-1]
 
 
 
